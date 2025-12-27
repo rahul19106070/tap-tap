@@ -713,14 +713,27 @@
         
         async function addCoinsFromTap(amount) {
             try {
-                // In a real app, you'd save this to backend
-                // For now, just update local balance
+                const response = await fetch(`${API_URL}/api/tap`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        telegram_id: currentUser.telegram_id,
+                        coins: amount
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    currentUser.coins = data.new_balance;
+                    document.getElementById('balance').textContent = Math.floor(data.new_balance);
+                }
+            } catch (error) {
+                console.error('Error adding coins:', error);
+                // Fallback to local update
                 if (currentUser) {
                     currentUser.coins = (currentUser.coins || 0) + amount;
                     document.getElementById('balance').textContent = Math.floor(currentUser.coins);
                 }
-            } catch (error) {
-                console.error('Error adding coins:', error);
             }
         }
         
