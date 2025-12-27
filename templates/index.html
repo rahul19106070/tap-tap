@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎮 Tap Tap - Earn Coins Game</title>
+    <title>Tap Tap - Earn Coins</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
-        
         * {
             margin: 0;
             padding: 0;
@@ -15,188 +13,254 @@
         }
         
         body {
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000000;
+            color: #ffffff;
             min-height: 100vh;
-            padding: 10px;
-            color: #333;
+            overflow-x: hidden;
         }
         
         .container {
-            max-width: 600px;
+            max-width: 100%;
             margin: 0 auto;
+            padding: 0;
         }
         
-        .header {
-            text-align: center;
-            padding: 15px 0;
-            margin-bottom: 15px;
-        }
-        
-        .header h1 {
-            color: white;
-            font-size: 28px;
-            font-weight: 800;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            margin-bottom: 5px;
-        }
-        
-        .stats-bar {
+        /* Top Bar - Notcoin Style */
+        .top-bar {
             display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         
-        .stat-badge {
-            flex: 1;
-            background: rgba(255,255,255,0.95);
-            padding: 12px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        .coin-display {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
         
-        .stat-label {
-            font-size: 11px;
-            color: #666;
-            text-transform: uppercase;
-            font-weight: 600;
+        .coin-label {
+            font-size: 12px;
+            color: #888;
             margin-bottom: 4px;
+        }
+        
+        .coin-amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+        }
+        
+        .level-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+        
+        .level-text {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        /* Main Tap Area - Notcoin Style */
+        .tap-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            padding: 40px 20px;
+            position: relative;
+        }
+        
+        .coin-container {
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .coin {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.5),
+                        0 0 80px rgba(255, 215, 0, 0.3),
+                        inset 0 0 20px rgba(255, 255, 255, 0.3);
+            transition: all 0.1s;
+            position: relative;
+            animation: coinGlow 2s ease-in-out infinite;
+        }
+        
+        .coin:active {
+            transform: scale(0.95);
+        }
+        
+        @keyframes coinGlow {
+            0%, 100% {
+                box-shadow: 0 0 40px rgba(255, 215, 0, 0.5),
+                            0 0 80px rgba(255, 215, 0, 0.3),
+                            inset 0 0 20px rgba(255, 255, 255, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 60px rgba(255, 215, 0, 0.7),
+                            0 0 120px rgba(255, 215, 0, 0.5),
+                            inset 0 0 30px rgba(255, 255, 255, 0.4);
+            }
+        }
+        
+        .coin-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tap-hint {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #888;
+            text-align: center;
+        }
+        
+        .energy-bar {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .energy-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .energy-progress {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .energy-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88 0%, #00cc6a 100%);
+            border-radius: 4px;
+            transition: width 0.3s;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
         }
         
         .stat-value {
             font-size: 20px;
             font-weight: 700;
-            color: #667eea;
+            color: #fff;
+            margin-bottom: 4px;
         }
         
-        .balance-card {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 20px;
-            text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            position: relative;
-            overflow: hidden;
+        .stat-label {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
         }
         
-        .balance-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: pulse 3s ease-in-out infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 0.8; }
-        }
-        
-        .balance-card h2 {
-            font-size: 14px;
-            opacity: 0.9;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-        
-        .balance-card .amount {
-            font-size: 42px;
-            font-weight: 800;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-            position: relative;
-            z-index: 1;
-        }
-        
-        .level-badge {
-            display: inline-block;
-            background: rgba(255,255,255,0.2);
-            padding: 6px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            margin-top: 10px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            background: rgba(255,255,255,0.95);
-            padding: 5px;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        
-        .tab {
-            flex: 1;
-            padding: 12px 8px;
-            cursor: pointer;
-            border: none;
-            background: transparent;
-            color: #666;
-            font-size: 14px;
-            font-weight: 600;
-            border-radius: 10px;
-            transition: all 0.3s;
-        }
-        
-        .tab.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 4px 8px rgba(102,126,234,0.4);
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.3s;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .task-card {
-            background: white;
-            border-radius: 16px;
-            padding: 18px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border-left: 5px solid #667eea;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .task-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
+        /* Bottom Navigation - Notcoin Style */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
             left: 0;
-            width: 5px;
-            height: 100%;
-            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-around;
+            z-index: 100;
         }
         
-        .task-card:active {
-            transform: scale(0.98);
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 20px;
+            cursor: pointer;
+            color: #888;
+            transition: all 0.3s;
+            border: none;
+            background: none;
+            font-size: 12px;
         }
         
-        .task-card.completed {
-            opacity: 0.7;
-            border-left-color: #4caf50;
+        .nav-item.active {
+            color: #fff;
+        }
+        
+        .nav-icon {
+            font-size: 24px;
+        }
+        
+        /* Content Sections */
+        .content-section {
+            display: none;
+            padding: 20px;
+            padding-bottom: 80px;
+            min-height: calc(100vh - 200px);
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        
+        /* Task Cards */
+        .task-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
         }
         
         .task-header {
@@ -207,144 +271,80 @@
         }
         
         .task-title {
-            font-weight: 700;
             font-size: 18px;
+            font-weight: 600;
+            color: #fff;
             flex: 1;
-            color: #333;
         }
         
         .task-reward {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 16px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 14px;
             font-weight: 700;
-            box-shadow: 0 4px 8px rgba(245,87,108,0.3);
-            white-space: nowrap;
         }
         
         .task-description {
-            color: #666;
-            margin-bottom: 12px;
+            color: #aaa;
             font-size: 14px;
+            margin-bottom: 15px;
             line-height: 1.5;
         }
         
-        .task-meta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #999;
-            margin-bottom: 12px;
-        }
-        
         .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            width: 100%;
+            padding: 14px;
             border: none;
-            padding: 14px 24px;
             border-radius: 12px;
             font-size: 16px;
-            font-weight: 700;
+            font-weight: 600;
             cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
             transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(102,126,234,0.4);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000;
         }
         
         .btn:active {
-            transform: scale(0.95);
-            box-shadow: 0 2px 6px rgba(102,126,234,0.3);
+            transform: scale(0.98);
         }
         
         .btn-success {
-            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-            box-shadow: 0 4px 12px rgba(76,175,80,0.4);
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+            color: #000;
         }
         
-        .btn-success:active {
-            box-shadow: 0 2px 6px rgba(76,175,80,0.3);
+        /* Tap Animation */
+        .tap-effect {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.6);
+            pointer-events: none;
+            animation: tapAnimation 0.6s ease-out;
         }
         
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: white;
+        @keyframes tapAnimation {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(3);
+                opacity: 0;
+            }
         }
         
-        .empty-state-icon {
-            font-size: 64px;
-            margin-bottom: 15px;
-            opacity: 0.8;
-        }
-        
-        .empty-state p {
-            font-size: 16px;
-            opacity: 0.9;
-        }
-        
-        .form-group {
-            margin-bottom: 18px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            color: #333;
-        }
-        
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 16px;
-            font-family: inherit;
-            transition: all 0.3s;
-        }
-        
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
-        }
-        
-        .form-group textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px 20px;
-            color: white;
-        }
-        
-        .loading::after {
-            content: '...';
-            animation: dots 1.5s steps(4, end) infinite;
-        }
-        
-        @keyframes dots {
-            0%, 20% { content: '.'; }
-            40% { content: '..'; }
-            60%, 100% { content: '...'; }
-        }
-        
-        .coin-animation {
+        /* Coin Float Animation */
+        .coin-float {
             position: fixed;
-            font-size: 30px;
+            font-size: 24px;
             pointer-events: none;
             z-index: 1000;
-            animation: coinFloat 2s ease-out forwards;
+            animation: coinFloat 1.5s ease-out forwards;
+            font-weight: 700;
         }
         
         @keyframes coinFloat {
@@ -353,144 +353,187 @@
                 opacity: 1;
             }
             100% {
-                transform: translateY(-100px) scale(1.5);
+                transform: translateY(-150px) scale(1.5);
                 opacity: 0;
             }
         }
         
-        .level-up-modal {
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+        }
+        
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #aaa;
+            font-weight: 600;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #FFD700;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+        
+        /* Level Up Modal */
+        .modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0, 0, 0, 0.9);
             z-index: 2000;
             align-items: center;
             justify-content: center;
         }
         
-        .level-up-modal.active {
+        .modal.active {
             display: flex;
         }
         
-        .level-up-content {
-            background: white;
+        .modal-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 20px;
-            padding: 30px;
+            padding: 40px;
             text-align: center;
             max-width: 300px;
-            animation: scaleIn 0.3s;
+            animation: modalIn 0.3s;
         }
         
-        @keyframes scaleIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+        @keyframes modalIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
         
-        .level-up-icon {
+        .modal-icon {
             font-size: 64px;
-            margin-bottom: 15px;
-        }
-        
-        .admin-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-left: 8px;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
             margin-bottom: 20px;
         }
         
-        .stat-card {
-            background: white;
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        
-        .stat-value-large {
+        .modal-title {
             font-size: 24px;
             font-weight: 700;
-            color: #667eea;
+            margin-bottom: 10px;
         }
         
-        .stat-label-small {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
+        .modal-text {
+            color: #aaa;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🎮 Tap Tap</h1>
-            <p style="color: rgba(255,255,255,0.9); font-size: 14px;">Complete tasks & earn coins!</p>
-        </div>
-        
-        <div class="stats-bar">
-            <div class="stat-badge">
-                <div class="stat-label">Level</div>
-                <div class="stat-value" id="user-level">1</div>
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="coin-display">
+                <div class="coin-label">Balance</div>
+                <div class="coin-amount" id="balance">0</div>
             </div>
-            <div class="stat-badge">
-                <div class="stat-label">Tasks Done</div>
-                <div class="stat-value" id="tasks-done">0</div>
-            </div>
-            <div class="stat-badge">
-                <div class="stat-label">Total Earned</div>
-                <div class="stat-value" id="total-earned">0</div>
+            <div class="level-display">
+                <span class="level-text">Level <span id="level">1</span></span>
             </div>
         </div>
         
-        <div class="balance-card">
-            <h2>💰 Your Balance</h2>
-            <div class="amount" id="balance">0</div>
-            <div class="level-badge">Level <span id="level-display">1</span></div>
-        </div>
-        
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab('tasks')">🎯 Tasks</button>
-            <button class="tab" id="create-tab" onclick="switchTab('create')" style="display: none;">➕ Create</button>
-            <button class="tab" onclick="switchTab('referral')">👥 Refer</button>
-            <button class="tab" onclick="switchTab('leaderboard')">🏆 Top</button>
-        </div>
-        
-        <!-- Tasks Tab -->
-        <div id="tab-tasks" class="tab-content active">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value-large" id="assigned-count">0</div>
-                    <div class="stat-label-small">Assigned</div>
+        <!-- Main Tap Area -->
+        <div class="content-section active" id="tap-section">
+            <div class="tap-area">
+                <div class="coin-container" id="coin-container">
+                    <div class="coin" id="coin">
+                        <div class="coin-text">💰</div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value-large" id="available-count">0</div>
-                    <div class="stat-label-small">Available</div>
+                <div class="tap-hint">Tap the coin to earn!</div>
+                
+                <div class="energy-bar">
+                    <div class="energy-label">
+                        <span>Energy</span>
+                        <span id="energy-text">100/100</span>
+                    </div>
+                    <div class="energy-progress">
+                        <div class="energy-fill" id="energy-fill" style="width: 100%"></div>
+                    </div>
                 </div>
             </div>
             
-            <div id="tasks-content">
-                <div class="loading" style="color: white;">Loading tasks</div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="taps-today">0</div>
+                    <div class="stat-label">Taps Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="tasks-done">0</div>
+                    <div class="stat-label">Tasks Done</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="total-earned">0</div>
+                    <div class="stat-label">Total Earned</div>
+                </div>
             </div>
         </div>
         
-        <!-- Create Task Tab (Admin Only) -->
-        <div id="tab-create" class="tab-content">
+        <!-- Tasks Section -->
+        <div class="content-section" id="tasks-section">
+            <h2 class="section-title">Tasks</h2>
+            <div id="tasks-content">
+                <div class="loading">Loading tasks...</div>
+            </div>
+        </div>
+        
+        <!-- Create Task Section (Admin Only) -->
+        <div class="content-section" id="create-section">
+            <h2 class="section-title">Create Task</h2>
             <div class="task-card">
-                <h3 style="margin-bottom: 15px; color: #333;">Create New Task</h3>
                 <form id="create-task-form">
                     <div class="form-group">
                         <label>Task Title</label>
@@ -504,42 +547,68 @@
                         <label>Reward (coins)</label>
                         <input type="number" id="task-reward" value="10" min="1" required>
                     </div>
-                    <button type="submit" class="btn">✨ Create Task</button>
+                    <button type="submit" class="btn">Create Task</button>
                 </form>
             </div>
         </div>
         
-        <!-- Referral Tab -->
-        <div id="tab-referral" class="tab-content">
+        <!-- Referral Section -->
+        <div class="content-section" id="referral-section">
+            <h2 class="section-title">Referral</h2>
             <div class="task-card">
-                <h3 style="margin-bottom: 15px; color: #333;">Your Referral Code</h3>
-                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 12px; margin: 15px 0; font-family: monospace; text-align: center; font-size: 20px; font-weight: bold; color: white; letter-spacing: 2px;" id="referral-code">Loading...</div>
-                <p style="color: #666; margin-bottom: 15px; line-height: 1.6;">
-                    Share your referral link with friends! You'll earn <strong style="color: #667eea;">5 coins</strong> for each person who joins.
+                <h3 style="margin-bottom: 15px; color: #fff;">Your Referral Code</h3>
+                <div style="background: rgba(255, 215, 0, 0.2); padding: 20px; border-radius: 12px; margin: 15px 0; font-family: monospace; text-align: center; font-size: 20px; font-weight: bold; color: #FFD700; letter-spacing: 2px; border: 1px solid rgba(255, 215, 0, 0.3);" id="referral-code">Loading...</div>
+                <p style="color: #aaa; margin-bottom: 15px; line-height: 1.6;">
+                    Share your referral link and earn <strong style="color: #FFD700;">5 coins</strong> for each person who joins!
                 </p>
-                <button class="btn" onclick="shareReferral()">📤 Share Referral Link</button>
-                <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e0e0e0; text-align: center;">
-                    <div class="stat-value-large" id="referrals-count">0</div>
-                    <div class="stat-label-small">Total Referrals</div>
+                <button class="btn" onclick="shareReferral()">Share Referral Link</button>
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); text-align: center;">
+                    <div class="stat-value" id="referrals-count">0</div>
+                    <div class="stat-label">Total Referrals</div>
                 </div>
             </div>
         </div>
         
-        <!-- Leaderboard Tab -->
-        <div id="tab-leaderboard" class="tab-content">
+        <!-- Leaderboard Section -->
+        <div class="content-section" id="leaderboard-section">
+            <h2 class="section-title">Leaderboard</h2>
             <div id="leaderboard-content">
-                <div class="loading" style="color: white;">Loading leaderboard</div>
+                <div class="loading">Loading leaderboard...</div>
             </div>
+        </div>
+        
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <button class="nav-item active" onclick="switchSection('tap')">
+                <div class="nav-icon">🎯</div>
+                <div>Tap</div>
+            </button>
+            <button class="nav-item" onclick="switchSection('tasks')">
+                <div class="nav-icon">📋</div>
+                <div>Tasks</div>
+            </button>
+            <button class="nav-item" id="create-nav" onclick="switchSection('create')" style="display: none;">
+                <div class="nav-icon">➕</div>
+                <div>Create</div>
+            </button>
+            <button class="nav-item" onclick="switchSection('referral')">
+                <div class="nav-icon">👥</div>
+                <div>Refer</div>
+            </button>
+            <button class="nav-item" onclick="switchSection('leaderboard')">
+                <div class="nav-icon">🏆</div>
+                <div>Top</div>
+            </button>
         </div>
     </div>
     
     <!-- Level Up Modal -->
-    <div id="level-up-modal" class="level-up-modal">
-        <div class="level-up-content">
-            <div class="level-up-icon">🎉</div>
-            <h2 style="margin-bottom: 10px; color: #667eea;">Level Up!</h2>
-            <p style="color: #666; margin-bottom: 20px;">You've reached level <span id="new-level-text">1</span>!</p>
-            <button class="btn" onclick="closeLevelUpModal()">Awesome! 🚀</button>
+    <div id="level-up-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon">🎉</div>
+            <div class="modal-title">Level Up!</div>
+            <div class="modal-text">You've reached level <span id="new-level-text">1</span>!</div>
+            <button class="btn" onclick="closeLevelUpModal()">Awesome!</button>
         </div>
     </div>
     
@@ -547,8 +616,14 @@
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
+        tg.setHeaderColor('#000000');
+        tg.setBackgroundColor('#000000');
         
         let currentUser = null;
+        let energy = 100;
+        let maxEnergy = 100;
+        let tapsToday = 0;
+        let coinsPerTap = 1;
         const API_URL = window.location.origin;
         
         // Initialize
@@ -565,100 +640,197 @@
                 loadTasks();
                 loadReferral();
                 loadLeaderboard();
+                
+                // Load tap stats
+                loadTapStats();
             } catch (error) {
                 console.error('Init error:', error);
-                tg.showAlert('Failed to initialize. Please try again.');
             }
         }
         
         function updateUI() {
             if (currentUser) {
-                document.getElementById('balance').textContent = `${currentUser.coins} coins`;
-                document.getElementById('user-level').textContent = currentUser.level || 1;
-                document.getElementById('level-display').textContent = currentUser.level || 1;
+                document.getElementById('balance').textContent = Math.floor(currentUser.coins || 0);
+                document.getElementById('level').textContent = currentUser.level || 1;
                 document.getElementById('tasks-done').textContent = currentUser.tasks_completed || 0;
-                document.getElementById('total-earned').textContent = `${currentUser.total_earned || 0} coins`;
+                document.getElementById('total-earned').textContent = Math.floor(currentUser.total_earned || 0);
                 
-                // Show create tab only for admins
                 if (currentUser.is_admin) {
-                    document.getElementById('create-tab').style.display = 'block';
+                    document.getElementById('create-nav').style.display = 'block';
                 }
             }
         }
         
+        // Tap to Earn
+        let tapCooldown = false;
+        document.getElementById('coin').addEventListener('click', async function() {
+            if (tapCooldown || energy <= 0) return;
+            
+            tapCooldown = true;
+            energy = Math.max(0, energy - 1);
+            tapsToday++;
+            
+            // Update energy bar
+            updateEnergyBar();
+            
+            // Create tap effect
+            createTapEffect(event);
+            
+            // Create coin float animation
+            createCoinFloat(coinsPerTap);
+            
+            // Add coins
+            await addCoinsFromTap(coinsPerTap);
+            
+            // Update UI
+            document.getElementById('taps-today').textContent = tapsToday;
+            
+            setTimeout(() => {
+                tapCooldown = false;
+            }, 100);
+        });
+        
+        function createTapEffect(event) {
+            const effect = document.createElement('div');
+            effect.className = 'tap-effect';
+            const rect = document.getElementById('coin').getBoundingClientRect();
+            effect.style.left = (event.clientX - rect.left - 25) + 'px';
+            effect.style.top = (event.clientY - rect.top - 25) + 'px';
+            document.getElementById('coin-container').appendChild(effect);
+            setTimeout(() => effect.remove(), 600);
+        }
+        
+        function createCoinFloat(amount) {
+            const coin = document.createElement('div');
+            coin.className = 'coin-float';
+            coin.textContent = `+${amount} 💰`;
+            coin.style.left = '50%';
+            coin.style.top = '50%';
+            coin.style.transform = 'translate(-50%, -50%)';
+            document.body.appendChild(coin);
+            setTimeout(() => coin.remove(), 1500);
+        }
+        
+        async function addCoinsFromTap(amount) {
+            try {
+                // In a real app, you'd save this to backend
+                // For now, just update local balance
+                if (currentUser) {
+                    currentUser.coins = (currentUser.coins || 0) + amount;
+                    document.getElementById('balance').textContent = Math.floor(currentUser.coins);
+                }
+            } catch (error) {
+                console.error('Error adding coins:', error);
+            }
+        }
+        
+        function updateEnergyBar() {
+            const percentage = (energy / maxEnergy) * 100;
+            document.getElementById('energy-fill').style.width = percentage + '%';
+            document.getElementById('energy-text').textContent = `${energy}/${maxEnergy}`;
+            
+            if (energy <= 0) {
+                document.getElementById('energy-text').textContent = 'Recharging...';
+                // Recharge energy over time
+                startEnergyRecharge();
+            }
+        }
+        
+        function startEnergyRecharge() {
+            const rechargeInterval = setInterval(() => {
+                if (energy < maxEnergy) {
+                    energy++;
+                    updateEnergyBar();
+                } else {
+                    clearInterval(rechargeInterval);
+                }
+            }, 1000); // 1 energy per second
+        }
+        
+        async function loadTapStats() {
+            // Load daily tap stats from backend if available
+            // For now, just use local storage
+            const saved = localStorage.getItem(`taps_${currentUser?.telegram_id}`);
+            if (saved) {
+                const data = JSON.parse(saved);
+                tapsToday = data.taps || 0;
+                document.getElementById('taps-today').textContent = tapsToday;
+            }
+        }
+        
+        function saveTapStats() {
+            if (currentUser) {
+                localStorage.setItem(`taps_${currentUser.telegram_id}`, JSON.stringify({
+                    taps: tapsToday,
+                    date: new Date().toDateString()
+                }));
+            }
+        }
+        
+        // Section Switching
+        function switchSection(section) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById(`${section}-section`).classList.add('active');
+            event.target.closest('.nav-item').classList.add('active');
+            
+            if (section === 'leaderboard') {
+                loadLeaderboard();
+            }
+        }
+        
+        // Tasks
         async function loadTasks() {
             try {
                 const response = await fetch(`${API_URL}/api/tasks?telegram_id=${currentUser.telegram_id}`);
                 const data = await response.json();
                 
-                document.getElementById('assigned-count').textContent = data.assigned.length;
-                document.getElementById('available-count').textContent = data.available.length;
-                
                 let html = '';
                 
                 if (data.assigned.length > 0) {
-                    html += '<h3 style="margin: 20px 0 10px 0; color: white; font-weight: 700;">My Assigned Tasks</h3>';
+                    html += '<h3 style="margin: 20px 0 10px 0; color: #fff; font-size: 18px;">My Tasks</h3>';
                     data.assigned.forEach(task => {
                         html += renderTask(task, 'assigned');
                     });
                 }
                 
                 if (data.available.length > 0) {
-                    html += '<h3 style="margin: 20px 0 10px 0; color: white; font-weight: 700;">Available Tasks</h3>';
+                    html += '<h3 style="margin: 20px 0 10px 0; color: #fff; font-size: 18px;">Available Tasks</h3>';
                     data.available.forEach(task => {
                         html += renderTask(task, 'available');
                     });
                 }
                 
                 if (data.assigned.length === 0 && data.available.length === 0) {
-                    html = '<div class="empty-state"><div class="empty-state-icon">📋</div><p>No tasks available yet</p><p style="font-size: 14px; margin-top: 10px;">Check back soon for new tasks!</p></div>';
+                    html = '<div class="empty-state"><div class="empty-icon">📋</div><div>No tasks available</div></div>';
                 }
                 
                 document.getElementById('tasks-content').innerHTML = html;
             } catch (error) {
                 console.error('Load tasks error:', error);
-                document.getElementById('tasks-content').innerHTML = '<div class="empty-state">Failed to load tasks</div>';
             }
         }
         
         function renderTask(task, type) {
-            const isCompleted = task.completed;
             return `
-                <div class="task-card ${isCompleted ? 'completed' : ''}">
+                <div class="task-card">
                     <div class="task-header">
                         <div class="task-title">${task.title}</div>
                         <div class="task-reward">💰 ${task.reward_coins}</div>
                     </div>
                     <div class="task-description">${task.description || 'No description'}</div>
-                    <div class="task-meta">
-                        <span>By: ${task.creator_name}</span>
-                        <span>${new Date(task.created_at).toLocaleDateString()}</span>
-                    </div>
-                    ${type === 'assigned' && !isCompleted ? 
-                        `<button class="btn btn-success" onclick="completeTask(${task.id})">✅ Complete & Earn ${task.reward_coins} Coins</button>` : 
+                    ${type === 'assigned' && !task.completed ? 
+                        `<button class="btn btn-success" onclick="completeTask(${task.id})">Complete & Earn ${task.reward_coins} Coins</button>` : 
                         type === 'available' ? 
-                        `<button class="btn" onclick="assignTaskToMe(${task.id})">📌 Take This Task</button>` : 
+                        `<button class="btn" onclick="assignTaskToMe(${task.id})">Take This Task</button>` : 
                         ''
                     }
                 </div>
             `;
         }
         
-        function showCoinAnimation(amount) {
-            const coin = document.createElement('div');
-            coin.className = 'coin-animation';
-            coin.textContent = `+${amount} 💰`;
-            coin.style.left = '50%';
-            coin.style.top = '50%';
-            coin.style.transform = 'translate(-50%, -50%)';
-            document.body.appendChild(coin);
-            
-            setTimeout(() => coin.remove(), 2000);
-        }
-        
         async function completeTask(taskId) {
-            if (!confirm('Complete this task and earn coins?')) return;
-            
             try {
                 const response = await fetch(`${API_URL}/api/tasks/complete`, {
                     method: 'POST',
@@ -671,31 +843,18 @@
                 
                 const data = await response.json();
                 if (data.success) {
-                    showCoinAnimation(data.reward);
-                    tg.showAlert(`🎉 Task completed! You earned ${data.reward} coins!`);
+                    tg.showAlert(`🎉 You earned ${data.reward} coins!`);
                     currentUser.coins = data.new_balance;
                     currentUser.tasks_completed = data.tasks_completed;
                     if (data.level_up) {
-                        currentUser.level = data.new_level;
                         showLevelUpModal(data.new_level);
                     }
                     updateUI();
                     loadTasks();
-                } else {
-                    tg.showAlert(data.error || 'Failed to complete task');
                 }
             } catch (error) {
                 tg.showAlert('Error completing task');
             }
-        }
-        
-        function showLevelUpModal(level) {
-            document.getElementById('new-level-text').textContent = level;
-            document.getElementById('level-up-modal').classList.add('active');
-        }
-        
-        function closeLevelUpModal() {
-            document.getElementById('level-up-modal').classList.remove('active');
         }
         
         async function assignTaskToMe(taskId) {
@@ -710,18 +869,16 @@
                     })
                 });
                 
-                const data = await response.json();
-                if (data.success) {
-                    tg.showAlert('✅ Task assigned to you!');
+                if (response.ok) {
+                    tg.showAlert('✅ Task assigned!');
                     loadTasks();
-                } else {
-                    tg.showAlert(data.error || 'Failed to assign task');
                 }
             } catch (error) {
                 tg.showAlert('Error assigning task');
             }
         }
         
+        // Create Task
         document.getElementById('create-task-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -743,9 +900,9 @@
                 
                 const data = await response.json();
                 if (data.success) {
-                    tg.showAlert('✅ Task created successfully!');
+                    tg.showAlert('✅ Task created!');
                     document.getElementById('create-task-form').reset();
-                    switchTab('tasks');
+                    switchSection('tasks');
                     loadTasks();
                 } else {
                     tg.showAlert(data.error || 'Failed to create task');
@@ -755,6 +912,7 @@
             }
         });
         
+        // Referral
         async function loadReferral() {
             try {
                 const response = await fetch(`${API_URL}/api/referral?telegram_id=${currentUser.telegram_id}`);
@@ -770,17 +928,17 @@
             const referralCode = document.getElementById('referral-code').textContent;
             const botUsername = tg.initDataUnsafe?.bot?.username || 'your_bot';
             const referralLink = `https://t.me/${botUsername}?start=${referralCode}`;
-            const message = `🎮 Join Tap Tap and earn coins by completing tasks!\n\nUse my referral link: ${referralLink}`;
             
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(referralLink).then(() => {
-                    tg.showAlert('✅ Referral link copied to clipboard!');
+                    tg.showAlert('✅ Link copied!');
                 });
             } else {
-                tg.showAlert(`Your referral link:\n${referralLink}`);
+                tg.showAlert(`Your link:\n${referralLink}`);
             }
         }
         
+        // Leaderboard
         async function loadLeaderboard() {
             try {
                 const response = await fetch(`${API_URL}/api/leaderboard`);
@@ -803,29 +961,29 @@
                 });
                 
                 if (data.length === 0) {
-                    html = '<div class="empty-state"><div class="empty-state-icon">🏆</div><p>No users yet</p></div>';
+                    html = '<div class="empty-state"><div class="empty-icon">🏆</div><div>No users yet</div></div>';
                 }
                 
                 document.getElementById('leaderboard-content').innerHTML = html;
             } catch (error) {
                 console.error('Load leaderboard error:', error);
-                document.getElementById('leaderboard-content').innerHTML = '<div class="empty-state">Failed to load leaderboard</div>';
             }
         }
         
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            
-            event.target.classList.add('active');
-            document.getElementById(`tab-${tabName}`).classList.add('active');
-            
-            if (tabName === 'leaderboard') {
-                loadLeaderboard();
-            }
+        // Level Up Modal
+        function showLevelUpModal(level) {
+            document.getElementById('new-level-text').textContent = level;
+            document.getElementById('level-up-modal').classList.add('active');
         }
         
-        // Initialize on load
+        function closeLevelUpModal() {
+            document.getElementById('level-up-modal').classList.remove('active');
+        }
+        
+        // Save stats periodically
+        setInterval(saveTapStats, 5000);
+        
+        // Initialize
         init();
     </script>
 </body>

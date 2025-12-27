@@ -384,6 +384,32 @@ def get_referral():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/tap', methods=['POST'])
+def tap_earn():
+    """Handle tap-to-earn"""
+    try:
+        data = request.json
+        telegram_id = int(data.get('telegram_id'))
+        coins = float(data.get('coins', 1.0))
+        
+        user = db.get_or_create_user(telegram_id=telegram_id)
+        
+        # Add coins from tap
+        new_balance = db.add_coins(
+            user.id,
+            coins,
+            'tap_reward',
+            f'Tap to earn: {coins} coins'
+        )
+        
+        return jsonify({
+            'success': True,
+            'coins_earned': coins,
+            'new_balance': new_balance
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
