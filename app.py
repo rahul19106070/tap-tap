@@ -64,13 +64,20 @@ def get_user():
         # Get or create user
         user = db.get_or_create_user(telegram_id, username, first_name)
         
+        # Check if user is admin
+        is_admin = str(user.telegram_id) in ADMIN_TELEGRAM_IDS or user.is_admin
+        
         return jsonify({
             'id': user.id,
             'telegram_id': user.telegram_id,
             'username': user.username,
             'first_name': user.first_name,
             'coins': user.coins,
-            'referral_code': user.referral_code
+            'referral_code': user.referral_code,
+            'is_admin': is_admin,
+            'level': user.level or 1,
+            'total_earned': user.total_earned or 0.0,
+            'tasks_completed': user.tasks_completed or 0
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -131,7 +138,7 @@ def get_tasks():
 
 @app.route('/api/tasks/create', methods=['POST'])
 def create_task():
-    """Create a new task"""
+    """Create a new task - Admin only"""
     try:
         data = request.json
         telegram_id = int(data.get('telegram_id'))
@@ -141,8 +148,10 @@ def create_task():
         
         user = db.get_or_create_user(telegram_id=telegram_id)
         
-        if user.coins < TASK_CREATION_COST:
-            return jsonify({'error': f'Insufficient coins. Need {TASK_CREATION_COST} coins.'}), 400
+        # Check if user is admin
+        is_admin = str(user.telegram_id) in ADMIN_TELEGRAM_IDS or user.is_admin
+        if not is_admin:
+            return jsonify({'error': 'Only admins can create tasks!'}), 403
         
         session = db.get_session()
         try:
@@ -155,15 +164,15 @@ def create_task():
             )
             session.add(task)
             
-            # Deduct coins
-            user.coins -= TASK_CREATION_COST
-            transaction = Transaction(
-                user_id=user.id,
-                amount=-TASK_CREATION_COST,
-                transaction_type='task_creation',
-                description=f'Created task: {title}'
-            )
-            session.add(transaction)
+            # Admins don't pay for task creation
+            # user.coins -= TASK_CREATION_COST
+            # transaction = Transaction(
+            #     user_id=user.id,
+            #     amount=-TASK_CREATION_COST,
+            #     transaction_type='task_creation',
+            #     description=f'Created task: {title}'
+            # )
+            # session.add(transaction)
             session.commit()
             session.refresh(task)
             
@@ -250,10 +259,32 @@ def complete_task():
                 f'Completed task: {task.title}'
             )
             
+            # Update user stats
+            from database import User
+            db_user = session.query(User).filter_by(id=user.id).first()
+            if db_user:
+                old_level = db_user.level or 1
+                db_user.tasks_completed = (db_user.tasks_completed or 0) + 1
+                db_user.total_earned = (db_user.total_earned or 0.0) + task.reward_coins
+                
+                # Level up system (every 10 tasks = 1 level)
+                new_level = (db_user.tasks_completed // 10) + 1
+                if new_level > (db_user.level or 1):
+                    db_user.level = new_level
+                
+                session.commit()
+                level_up = new_level > old_level
+            else:
+                new_level = 1
+                level_up = False
+            
             return jsonify({
                 'success': True,
                 'reward': task.reward_coins,
-                'new_balance': new_balance
+                'new_balance': new_balance,
+                'level_up': level_up,
+                'new_level': new_level,
+                'tasks_completed': db_user.tasks_completed if db_user else 0
             })
         finally:
             session.close()

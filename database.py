@@ -16,6 +16,10 @@ class User(Base):
     coins = Column(Float, default=0.0)
     referral_code = Column(String, unique=True)
     referred_by = Column(Integer, ForeignKey('users.id'), nullable=True)
+    is_admin = Column(Boolean, default=False)
+    level = Column(Integer, default=1)
+    total_earned = Column(Float, default=0.0)
+    tasks_completed = Column(Integer, default=0)
     created_at = Column(DateTime, default=datetime.utcnow)
     
     # Relationships
