@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tap Tap Task Game</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid var(--tg-theme-button-color, #3390ec);
+            margin-bottom: 20px;
+        }
+        
+        .balance-card {
+            background: var(--tg-theme-button-color, #3390ec);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .balance-card h2 {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .balance-card .amount {
+            font-size: 32px;
+            font-weight: bold;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--tg-theme-hint-color, #999999);
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: var(--tg-theme-text-color, #000000);
+            font-size: 16px;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            border-bottom-color: var(--tg-theme-button-color, #3390ec);
+            color: var(--tg-theme-button-color, #3390ec);
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .task-card {
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--tg-theme-button-color, #3390ec);
+        }
+        
+        .task-card.completed {
+            opacity: 0.6;
+            border-left-color: #4caf50;
+        }
+        
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+        
+        .task-title {
+            font-weight: bold;
+            font-size: 18px;
+            flex: 1;
+        }
+        
+        .task-reward {
+            background: var(--tg-theme-button-color, #3390ec);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .task-description {
+            color: var(--tg-theme-hint-color, #666666);
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--tg-theme-hint-color, #999999);
+            margin-bottom: 10px;
+        }
+        
+        .btn {
+            background: var(--tg-theme-button-color, #3390ec);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: opacity 0.3s;
+        }
+        
+        .btn:active {
+            opacity: 0.7;
+        }
+        
+        .btn-secondary {
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            color: var(--tg-theme-text-color, #000000);
+        }
+        
+        .btn-success {
+            background: #4caf50;
+        }
+        
+        .btn-danger {
+            background: #f44336;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--tg-theme-bg-color, #ffffff);
+            border-radius: 12px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--tg-theme-hint-color, #cccccc);
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--tg-theme-hint-color, #999999);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--tg-theme-hint-color, #999999);
+        }
+        
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .user-search {
+            position: relative;
+        }
+        
+        .user-search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--tg-theme-bg-color, #ffffff);
+            border: 1px solid var(--tg-theme-hint-color, #cccccc);
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            margin-top: 5px;
+        }
+        
+        .user-result {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--tg-theme-hint-color, #eeeeee);
+        }
+        
+        .user-result:hover {
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+        }
+        
+        .user-result:last-child {
+            border-bottom: none;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--tg-theme-button-color, #3390ec);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--tg-theme-hint-color, #999999);
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Tap Tap Task Game</h1>
+        </div>
+        
+        <div class="balance-card">
+            <h2>Your Balance</h2>
+            <div class="amount" id="balance">0 coins</div>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('tasks')">📋 Tasks</button>
+            <button class="tab" onclick="switchTab('create')">➕ Create</button>
+            <button class="tab" onclick="switchTab('referral')">👥 Referral</button>
+            <button class="tab" onclick="switchTab('leaderboard')">🏆 Leaderboard</button>
+        </div>
+        
+        <!-- Tasks Tab -->
+        <div id="tab-tasks" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="assigned-count">0</div>
+                    <div class="stat-label">Assigned</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="available-count">0</div>
+                    <div class="stat-label">Available</div>
+                </div>
+            </div>
+            
+            <div id="tasks-content">
+                <div class="loading">Loading tasks...</div>
+            </div>
+        </div>
+        
+        <!-- Create Task Tab -->
+        <div id="tab-create" class="tab-content">
+            <div class="task-card">
+                <form id="create-task-form">
+                    <div class="form-group">
+                        <label>Task Title</label>
+                        <input type="text" id="task-title" required placeholder="e.g., Review Code">
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="task-description" placeholder="Describe what needs to be done..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Reward (coins)</label>
+                        <input type="number" id="task-reward" value="10" min="1" required>
+                    </div>
+                    <button type="submit" class="btn">Create Task (Costs 2 coins)</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Referral Tab -->
+        <div id="tab-referral" class="tab-content">
+            <div class="task-card">
+                <h3>Your Referral Code</h3>
+                <div style="background: var(--tg-theme-secondary-bg-color, #f0f0f0); padding: 15px; border-radius: 8px; margin: 15px 0; font-family: monospace; text-align: center; font-size: 18px; font-weight: bold;" id="referral-code">Loading...</div>
+                <p style="color: var(--tg-theme-hint-color, #666666); margin-bottom: 15px;">
+                    Share your referral link with friends! You'll earn <strong>5 coins</strong> for each person who joins.
+                </p>
+                <button class="btn" onclick="shareReferral()">📤 Share Referral Link</button>
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--tg-theme-hint-color, #eeeeee);">
+                    <div class="stat-value" id="referrals-count">0</div>
+                    <div class="stat-label">Total Referrals</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Leaderboard Tab -->
+        <div id="tab-leaderboard" class="tab-content">
+            <div id="leaderboard-content">
+                <div class="loading">Loading leaderboard...</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Assign Task Modal -->
+    <div id="assign-modal" class="modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 15px;">Assign Task</h2>
+            <div class="form-group">
+                <label>Search User</label>
+                <div class="user-search">
+                    <input type="text" id="user-search" placeholder="Search by username or name..." oninput="searchUsers(this.value)">
+                    <div id="user-search-results" class="user-search-results" style="display: none;"></div>
+                </div>
+            </div>
+            <button class="btn btn-secondary" onclick="closeAssignModal()">Cancel</button>
+        </div>
+    </div>
+    
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        
+        let currentUser = null;
+        let currentTaskId = null;
+        const API_URL = window.location.origin;
+        
+        // Initialize
+        async function init() {
+            try {
+                const initData = tg.initData;
+                const response = await fetch(`${API_URL}/api/user`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({initData})
+                });
+                currentUser = await response.json();
+                updateBalance();
+                loadTasks();
+                loadReferral();
+                loadLeaderboard();
+            } catch (error) {
+                console.error('Init error:', error);
+                tg.showAlert('Failed to initialize. Please try again.');
+            }
+        }
+        
+        function updateBalance() {
+            if (currentUser) {
+                document.getElementById('balance').textContent = `${currentUser.coins} coins`;
+            }
+        }
+        
+        async function loadTasks() {
+            try {
+                const response = await fetch(`${API_URL}/api/tasks?telegram_id=${currentUser.telegram_id}`);
+                const data = await response.json();
+                
+                document.getElementById('assigned-count').textContent = data.assigned.length;
+                document.getElementById('available-count').textContent = data.available.length;
+                
+                let html = '';
+                
+                if (data.assigned.length > 0) {
+                    html += '<h3 style="margin: 20px 0 10px 0;">My Assigned Tasks</h3>';
+                    data.assigned.forEach(task => {
+                        html += renderTask(task, 'assigned');
+                    });
+                }
+                
+                if (data.available.length > 0) {
+                    html += '<h3 style="margin: 20px 0 10px 0;">Available Tasks</h3>';
+                    data.available.forEach(task => {
+                        html += renderTask(task, 'available');
+                    });
+                }
+                
+                if (data.assigned.length === 0 && data.available.length === 0) {
+                    html = '<div class="empty-state"><div class="empty-state-icon">📋</div><p>No tasks available</p></div>';
+                }
+                
+                document.getElementById('tasks-content').innerHTML = html;
+            } catch (error) {
+                console.error('Load tasks error:', error);
+                document.getElementById('tasks-content').innerHTML = '<div class="empty-state">Failed to load tasks</div>';
+            }
+        }
+        
+        function renderTask(task, type) {
+            const isCompleted = task.completed;
+            return `
+                <div class="task-card ${isCompleted ? 'completed' : ''}">
+                    <div class="task-header">
+                        <div class="task-title">${task.title}</div>
+                        <div class="task-reward">💰 ${task.reward_coins}</div>
+                    </div>
+                    <div class="task-description">${task.description || 'No description'}</div>
+                    <div class="task-meta">
+                        <span>By: ${task.creator_name}</span>
+                        <span>${new Date(task.created_at).toLocaleDateString()}</span>
+                    </div>
+                    ${type === 'assigned' && !isCompleted ? 
+                        `<button class="btn btn-success" onclick="completeTask(${task.id})">✅ Complete Task</button>` : 
+                        type === 'available' ? 
+                        `<button class="btn" onclick="assignTaskToMe(${task.id})">📌 Assign to Me</button>` : 
+                        ''
+                    }
+                </div>
+            `;
+        }
+        
+        async function completeTask(taskId) {
+            if (!confirm('Complete this task and earn coins?')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/tasks/complete`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        task_id: taskId,
+                        telegram_id: currentUser.telegram_id
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    tg.showAlert(`✅ Task completed! You earned ${data.reward} coins!`);
+                    currentUser.coins = data.new_balance;
+                    updateBalance();
+                    loadTasks();
+                } else {
+                    tg.showAlert(data.error || 'Failed to complete task');
+                }
+            } catch (error) {
+                tg.showAlert('Error completing task');
+            }
+        }
+        
+        async function assignTaskToMe(taskId) {
+            try {
+                const response = await fetch(`${API_URL}/api/tasks/assign`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        task_id: taskId,
+                        assignee_telegram_id: currentUser.telegram_id,
+                        assigner_telegram_id: currentUser.telegram_id
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    tg.showAlert('✅ Task assigned to you!');
+                    loadTasks();
+                } else {
+                    tg.showAlert(data.error || 'Failed to assign task');
+                }
+            } catch (error) {
+                tg.showAlert('Error assigning task');
+            }
+        }
+        
+        document.getElementById('create-task-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('task-title').value;
+            const description = document.getElementById('task-description').value;
+            const reward = parseFloat(document.getElementById('task-reward').value);
+            
+            try {
+                const response = await fetch(`${API_URL}/api/tasks/create`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        telegram_id: currentUser.telegram_id,
+                        title,
+                        description,
+                        reward_coins: reward
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    tg.showAlert('✅ Task created successfully!');
+                    currentUser.coins = data.new_balance;
+                    updateBalance();
+                    document.getElementById('create-task-form').reset();
+                    switchTab('tasks');
+                    loadTasks();
+                } else {
+                    tg.showAlert(data.error || 'Failed to create task');
+                }
+            } catch (error) {
+                tg.showAlert('Error creating task');
+            }
+        });
+        
+        async function loadReferral() {
+            try {
+                const response = await fetch(`${API_URL}/api/referral?telegram_id=${currentUser.telegram_id}`);
+                const data = await response.json();
+                document.getElementById('referral-code').textContent = data.referral_code;
+                document.getElementById('referrals-count').textContent = data.referrals_count;
+            } catch (error) {
+                console.error('Load referral error:', error);
+            }
+        }
+        
+        function shareReferral() {
+            const referralCode = document.getElementById('referral-code').textContent;
+            const botUsername = tg.initDataUnsafe?.bot?.username || 'your_bot';
+            const referralLink = `https://t.me/${botUsername}?start=${referralCode}`;
+            const message = `🎮 Join Tap Tap Task Game and earn coins by completing tasks!\n\nUse my referral link: ${referralLink}`;
+            
+            // Copy to clipboard if available, otherwise show alert
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(referralLink).then(() => {
+                    tg.showAlert('✅ Referral link copied to clipboard!');
+                });
+            } else {
+                tg.showAlert(`Your referral link:\n${referralLink}`);
+            }
+        }
+        
+        async function loadLeaderboard() {
+            try {
+                const response = await fetch(`${API_URL}/api/leaderboard`);
+                const data = await response.json();
+                
+                let html = '';
+                data.forEach(user => {
+                    const medal = user.rank === 1 ? '🥇' : user.rank === 2 ? '🥈' : user.rank === 3 ? '🥉' : `${user.rank}.`;
+                    html += `
+                        <div class="task-card">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <span style="font-size: 20px; margin-right: 10px;">${medal}</span>
+                                    <strong>${user.first_name}</strong>
+                                </div>
+                                <div class="task-reward">${user.coins} coins</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                if (data.length === 0) {
+                    html = '<div class="empty-state"><div class="empty-state-icon">🏆</div><p>No users yet</p></div>';
+                }
+                
+                document.getElementById('leaderboard-content').innerHTML = html;
+            } catch (error) {
+                console.error('Load leaderboard error:', error);
+                document.getElementById('leaderboard-content').innerHTML = '<div class="empty-state">Failed to load leaderboard</div>';
+            }
+        }
+        
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            
+            if (tabName === 'leaderboard') {
+                loadLeaderboard();
+            }
+        }
+        
+        async function searchUsers(query) {
+            if (query.length < 2) {
+                document.getElementById('user-search-results').style.display = 'none';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/api/users/search?q=${encodeURIComponent(query)}`);
+                const users = await response.json();
+                
+                let html = '';
+                users.forEach(user => {
+                    html += `
+                        <div class="user-result" onclick="selectUser(${user.telegram_id}, '${user.first_name}')">
+                            <strong>${user.first_name}</strong> ${user.username ? '@' + user.username : ''}
+                        </div>
+                    `;
+                });
+                
+                if (users.length === 0) {
+                    html = '<div class="user-result">No users found</div>';
+                }
+                
+                document.getElementById('user-search-results').innerHTML = html;
+                document.getElementById('user-search-results').style.display = 'block';
+            } catch (error) {
+                console.error('Search users error:', error);
+            }
+        }
+        
+        function selectUser(telegramId, name) {
+            // This would be used for assigning tasks to other users
+            document.getElementById('user-search-results').style.display = 'none';
+            closeAssignModal();
+        }
+        
+        function closeAssignModal() {
+            document.getElementById('assign-modal').classList.remove('active');
+        }
+        
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
+

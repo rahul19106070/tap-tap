@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: tap-tap-miniapp
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: WEB_APP_URL
+        sync: false
+
