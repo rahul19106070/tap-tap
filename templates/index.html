@@ -635,7 +635,18 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({initData})
                 });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to initialize user');
+                }
+                
                 currentUser = await response.json();
+                
+                if (!currentUser || !currentUser.telegram_id) {
+                    console.error('Invalid user data received');
+                    return;
+                }
+                
                 updateUI();
                 loadTasks();
                 loadReferral();
@@ -645,6 +656,7 @@
                 loadTapStats();
             } catch (error) {
                 console.error('Init error:', error);
+                tg.showAlert('Failed to initialize. Please try again.');
             }
         }
         
@@ -927,13 +939,21 @@
         
         // Referral
         async function loadReferral() {
+            if (!currentUser || !currentUser.telegram_id) {
+                console.error('User not initialized');
+                return;
+            }
             try {
                 const response = await fetch(`${API_URL}/api/referral?telegram_id=${currentUser.telegram_id}`);
+                if (!response.ok) {
+                    throw new Error('Failed to load referral');
+                }
                 const data = await response.json();
                 document.getElementById('referral-code').textContent = data.referral_code;
                 document.getElementById('referrals-count').textContent = data.referrals_count;
             } catch (error) {
                 console.error('Load referral error:', error);
+                document.getElementById('referral-code').textContent = 'Error loading';
             }
         }
         

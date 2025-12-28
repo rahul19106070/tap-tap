@@ -1,0 +1,87 @@
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.67:5001
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [27/Dec/2025 23:29:33] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Dec/2025 23:29:45] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Dec/2025 23:29:45] "[31m[1mPOST /api/user HTTP/1.1[0m" 400 -
+127.0.0.1 - - [27/Dec/2025 23:29:45] "[35m[1mGET /api/tasks?telegram_id=undefined HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:45] "[35m[1mGET /api/referral?telegram_id=undefined HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:45] "[35m[1mGET /api/leaderboard HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:48] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:49] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:49] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:49] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:49] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:50] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:50] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:50] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:50] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:51] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:51] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:51] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:51] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:51] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:52] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:52] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:53] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:53] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:53] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:53] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:54] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:54] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:54] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:54] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:54] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:55] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:55] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:55] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:59] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:59] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:29:59] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:00] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:00] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:00] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:00] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:00] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:01] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:01] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:01] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:01] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:01] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:01] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:01] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:02] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:02] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:02] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:02] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:02] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:02] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:03] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:03] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:03] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:03] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:03] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:04] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:04] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:04] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:04] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:04] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:04] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:05] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:05] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:05] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:05] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:06] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:06] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [27/Dec/2025 23:30:06] "[35m[1mPOST /api/tap HTTP/1.1[0m" 500 -
+127.0.0.1 - - [28/Dec/2025 22:52:12] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [28/Dec/2025 22:52:24] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [28/Dec/2025 22:52:25] "[31m[1mPOST /api/user HTTP/1.1[0m" 400 -
+127.0.0.1 - - [28/Dec/2025 22:52:26] "[35m[1mGET /api/tasks?telegram_id=undefined HTTP/1.1[0m" 500 -
+127.0.0.1 - - [28/Dec/2025 22:52:26] "[35m[1mGET /api/referral?telegram_id=undefined HTTP/1.1[0m" 500 -
+127.0.0.1 - - [28/Dec/2025 22:52:26] "[35m[1mGET /api/leaderboard HTTP/1.1[0m" 500 -
+127.0.0.1 - - [28/Dec/2025 23:05:09] "[35m[1mGET /api/leaderboard HTTP/1.1[0m" 500 -

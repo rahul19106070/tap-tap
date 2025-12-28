@@ -61,8 +61,28 @@ def get_user():
         username = user_data.get('username')
         first_name = user_data.get('first_name')
         
+        # Check for referral code in start_param
+        referral_code = params.get('start_param', '')
+        
         # Get or create user
         user = db.get_or_create_user(telegram_id, username, first_name)
+        
+        # Handle referral if code provided and user not already referred
+        if referral_code and not user.referred_by:
+            referrer = db.get_user_by_referral_code(referral_code)
+            if referrer and referrer.id != user.id:
+                session = db.get_session()
+                try:
+                    from database import User
+                    db_user = session.query(User).filter_by(id=user.id).first()
+                    if db_user:
+                        db_user.referred_by = referrer.id
+                        session.commit()
+                        # Give bonus to referrer
+                        db.add_coins(referrer.id, REFERRAL_BONUS, 'referral_bonus', 
+                                   f'Referred user {first_name}')
+                finally:
+                    session.close()
         
         # Check if user is admin
         is_admin = str(user.telegram_id) in ADMIN_TELEGRAM_IDS or user.is_admin
@@ -366,7 +386,11 @@ def get_transactions():
 def get_referral():
     """Get referral info"""
     try:
-        telegram_id = int(request.args.get('telegram_id'))
+        telegram_id = request.args.get('telegram_id')
+        if not telegram_id or telegram_id == 'undefined':
+            return jsonify({'error': 'Invalid telegram_id'}), 400
+        
+        telegram_id = int(telegram_id)
         user = db.get_or_create_user(telegram_id=telegram_id)
         
         session = db.get_session()
@@ -381,6 +405,8 @@ def get_referral():
             })
         finally:
             session.close()
+    except ValueError:
+        return jsonify({'error': 'Invalid telegram_id format'}), 400
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
